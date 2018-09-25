@@ -12,7 +12,7 @@ function StartDB() {
     MongoClient.connect(MONGODB_URL, {useNewUrlParser: true}, function (err, result) {
         if (err) return exit()
         DB = result
-        console.log(`server start at :${process.pid}`)
+        console.log(`server start at : ${process.pid}`)
         DB.on('close', () => {
             return exit()
         })

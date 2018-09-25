@@ -7,6 +7,13 @@ const {QueryAccount, InsertAccount, GetNextUniqueId} = require('./data/db')
 const {argsCheck} = require('./function/argsCheck')
 const {promisify} = require('util')
 
+function _dealErr(e, returnData, cb) {
+    console.error(e)
+    returnData.msg = e
+    returnData.code = 10001
+    cb(JSON.stringify(returnData))
+}
+
 io.on('connection', function (socket) {
 
     console.log(`${socket.id} id connected`)
@@ -27,9 +34,7 @@ io.on('connection', function (socket) {
             returnData.data = uid
             return cb(JSON.stringify(returnData))
         } catch (e) {
-            returnData.msg = e
-            returnData.code = 10001
-            cb(JSON.stringify(returnData))
+            _dealErr(e, returnData, cb)
         }
     })
 
@@ -45,9 +50,7 @@ io.on('connection', function (socket) {
             returnData.data = account
             cb(JSON.stringify(returnData))
         } catch (e) {
-            returnData.msg = e
-            returnData.code = 10001
-            cb(JSON.stringify(returnData))
+            _dealErr(e, returnData, cb)
         }
     })
     // console.log('client connection')
