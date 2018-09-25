@@ -2,24 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="763f1bef-db7d-4bf5-9f72-4b3383b92d63" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/argsRules.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/dbconfig.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/regex.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/serverConfig.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/urlConfig.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/db.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/function/CheckAuth.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/function/argsCheck.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/function/exit.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/function/md5.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/socket.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/www" beforeDir="false" afterPath="$PROJECT_DIR$/bin/www" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/socket.js" beforeDir="false" afterPath="$PROJECT_DIR$/socket.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -45,8 +28,8 @@
       <file leaf-file-name="socket.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/socket.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="42" column="37" lean-forward="true" selection-start-line="42" selection-start-column="37" selection-end-line="42" selection-end-column="37" />
+            <state relative-caret-position="323">
+              <caret line="46" column="21" lean-forward="true" selection-start-line="46" selection-start-column="21" selection-end-line="46" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -212,18 +195,18 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1537887810295</updated>
-      <workItem from="1537887811696" duration="3292000" />
+      <workItem from="1537887811696" duration="3379000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3292000" />
+    <option name="totallyTimeSpent" value="3379000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17913593" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17913593" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
@@ -233,7 +216,7 @@
       <window_info id="npm" side_tool="true" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" weight="0.3293348" />
-      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.3991276" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3991276" />
       <window_info id="Favorites" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -328,8 +311,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/socket.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="42" column="37" lean-forward="true" selection-start-line="42" selection-start-column="37" selection-end-line="42" selection-end-column="37" />
+        <state relative-caret-position="323">
+          <caret line="46" column="21" lean-forward="true" selection-start-line="46" selection-start-column="21" selection-end-line="46" selection-end-column="21" />
         </state>
       </provider>
     </entry>

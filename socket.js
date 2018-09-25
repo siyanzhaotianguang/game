@@ -15,21 +15,21 @@ io.on('connection', function (socket) {
         let returnData = {code: 0, msg: 'suc', data: null}
         try {
             let checkResult = argsCheck({nickname, password}, 'a')
-            if (checkResult) return cb(checkResult)
+            if (checkResult) return cb(JSON.stringify(checkResult))
             let account = await QueryAccount({nickname})
             if (account) {
                 returnData.msg = '用户已存在'
                 returnData.code = 10002
-                return cb(returnData)
+                return cb(JSON.stringify(returnData))
             }
             let uid = await GetNextUniqueId('uid')
             await InsertAccount({uid, nickname, password})
             returnData.data = uid
-            return cb(returnData)
+            return cb(JSON.stringify(returnData))
         } catch (e) {
             returnData.msg = e
             returnData.code = 10001
-            cb(returnData)
+            cb(JSON.stringify(returnData))
         }
     })
 
@@ -40,14 +40,14 @@ io.on('connection', function (socket) {
             if (!account) {
                 returnData.msg = '验证失败'
                 returnData.code = 10002
-                return cb(returnData)
+                return cb(JSON.stringify(returnData))
             }
             returnData.data = account
-            cb(returnData)
+            cb(JSON.stringify(returnData))
         } catch (e) {
             returnData.msg = e
             returnData.code = 10001
-            cb(returnData)
+            cb(JSON.stringify(returnData))
         }
     })
     // console.log('client connection')
