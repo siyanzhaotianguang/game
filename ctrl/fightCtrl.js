@@ -1,14 +1,15 @@
-let { Pet } = require('../data/pet')
+let {Pet, RobotPet} = require('../data/pet')
 
 class Fight {
     constructor(fighter1, fighter2) {
-        if (!(fighter1 instanceof Pet) || !(fighter2 instanceof Pet)) {
+        if ((!(fighter1 instanceof Pet) && !(fighter1 instanceof RobotPet)) || (!(fighter2 instanceof Pet) && !(fighter2 instanceof RobotPet))) {
             return console.error('请传入2只宠物')
         }
         this.fighter1 = fighter1
         this.fighter2 = fighter2
-        this.fight = this.fight.bind(this);
+        this.fight = this.fight.bind(this)
     }
+
     static _attack(attacker, defender) {//攻击
         let DP = 300 / (300 + defender.def)//伤害比例
         let damage = Math.floor(attacker.str * DP)//计算基础伤害
@@ -20,7 +21,7 @@ class Fight {
         let isCri = Math.random() <= CR ? 1 : 0//是否触发暴击
         let criBouns = Math.floor(0.5 * isCri * damage)
         damage = damage + criBouns
-        
+
         //血量减少
         defender.curHp -= damage
         defender.curHp = defender.curHp < 0 ? 0 : defender.curHp
@@ -48,6 +49,7 @@ class Fight {
         function _getCopyObj(obj) {//获取copy对象
             return JSON.parse(JSON.stringify(obj))
         }
+
         function _changeAttackerAndDefender(attacker, defender) {//攻守交换
             return [defender, attacker]
         }
@@ -55,15 +57,15 @@ class Fight {
         while (true) {//轮流攻击
             if (fighter1.curHp <= 0 && fighter2.curHp <= 0) {
                 fightLogs.push('双方打成了平手')
-                return { winner: null, fightLogs }
+                return {winner: null, fightLogs}
             }
             if (fighter1.curHp <= 0) {
                 fightLogs.push(`${fighter2.name}获得了胜利`)
-                return { winner: fighter2, fightLogs }
+                return {winner: fighter2, fightLogs}
             }
             if (fighter2.curHp <= 0) {
                 fightLogs.push(`${fighter1.name}获得了胜利`)
-                return { winner: fighter1, fightLogs }
+                return {winner: fighter1, fightLogs}
             }
             fightLogs.push(Fight._attack(attacker, defender))
             let changeArr = _changeAttackerAndDefender(attacker, defender)

@@ -8,8 +8,9 @@ const argsCheck = require('./function/argsCheck')
 const {promisify} = require('util')
 const sleep = promisify(setTimeout)
 const MD5 = require('./function/md5')
-const {Pet} = require('./data/pet')
+const {Pet, RobotPet} = require('./data/pet')
 const AccountObj = {}
+const Fight = require('./ctrl/fightCtrl')
 
 
 function _dealErr(e, returnData, cb) {
@@ -87,6 +88,37 @@ async function startIo() {
                 if (!account.pets) account.pets = []
                 account.pets.push(pid)
                 await InsertPet(pet)
+                returnData.data = pet
+                cb(JSON.stringify(returnData))
+            } catch (e) {
+                _dealErr(e, returnData, cb)
+            }
+        })
+
+        //匹配战斗
+        socket.on('match fight', async (pid, cb) => {
+            let returnData = {code: 0, msg: 'suc', data: null}
+            try {
+                if (!socket.uid) {
+                    return _dealNoLogin(returnData, cb)
+                }
+                pid = parseInt(pid)
+                let account = AccountObj[socket.uid]
+                if (!account.pets || account.pets.indexOf(pid) < 0) {
+                    returnData.msg = '不是你的宠物'
+                    returnData.code = 10002
+                    return cb(JSON.stringify(returnData))
+                }
+                let pet = await QueryPet({pid})
+                if (!pet) {
+                    returnData.msg = '不存在该宠物'
+                    returnData.code = 10002
+                    return cb(JSON.stringify(returnData))
+                }
+                let robotPet = new RobotPet(pet.lv, '机器人大魔王', 1)
+                let fight = new Fight(pet, robotPet)
+                let result = fight.fight()
+                returnData.data = result
                 cb(JSON.stringify(returnData))
             } catch (e) {
                 _dealErr(e, returnData, cb)
