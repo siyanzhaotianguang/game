@@ -3,11 +3,12 @@
  */
 
 const ArgsRules = {
+    //账号
     'a_nickname': 'str1_6',
     'a_password': 'str6_12',
 
-    'p_title': 'str6_12',
-    'p_content': 'content',
+    //宠物
+    'p_name': 'str1_6',
 }
 
 const RuleFunc = {

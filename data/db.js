@@ -32,6 +32,26 @@ async function InsertAccount(data) {
     return await func(data)
 }
 
+
+async function UpdateAccount(data) {
+    const col = DB.db(DB_NAME).collection('account')
+    let func = promisify(col.updateOne).bind(col)
+    return await func({uid: data.uid}, {$set: data}, {upsert: false})
+}
+
+//pet
+async function InsertPet(data) {
+    const col = DB.db(DB_NAME).collection('pet')
+    let func = promisify(col.insert).bind(col)
+    return await func(data)
+}
+
+async function QueryPet(cnd) {
+    const col = DB.db(DB_NAME).collection('pet')
+    let func = promisify(col.findOne).bind(col)
+    return await func(cnd)
+}
+
 //post
 // async function QueryPost(cnd) {
 //     const col = DB.db(DB_NAME).collection('post')
@@ -85,6 +105,11 @@ let exportObject = {
 
     QueryAccount,
     InsertAccount,
+    UpdateAccount,
+
+    InsertPet,
+    QueryPet,
+
     GetNextUniqueId,
 
     // QueryPost,

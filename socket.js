@@ -2,10 +2,15 @@
  * Created by MyPC on 2018/9/25
  */
 
-let {io} = require('./bin/www')
-const {QueryAccount, InsertAccount, GetNextUniqueId} = require('./data/db')
-const {argsCheck} = require('./function/argsCheck')
+let io = null
+const {QueryAccount, InsertAccount, UpdateAccount, GetNextUniqueId, InsertPet, QueryPet} = require('./data/db')
+const argsCheck = require('./function/argsCheck')
 const {promisify} = require('util')
+const sleep = promisify(setTimeout)
+const MD5 = require('./function/md5')
+const {Pet} = require('./data/pet')
+const AccountObj = {}
+
 
 function _dealErr(e, returnData, cb) {
     console.error(e)
@@ -14,59 +19,101 @@ function _dealErr(e, returnData, cb) {
     cb(JSON.stringify(returnData))
 }
 
-io.on('connection', function (socket) {
+function _dealNoLogin(returnData, cb) {
+    returnData.msg = '请先登录'
+    returnData.code = 10099
+    cb(JSON.stringify(returnData))
+}
 
-    console.log(`${socket.id} id connected`)
+async function startIo() {
+    io.on('connection', function (socket) {
 
-    socket.on('register', async (nickname, password, cb) => {
-        let returnData = {code: 0, msg: 'suc', data: null}
-        try {
-            let checkResult = argsCheck({nickname, password}, 'a')
-            if (checkResult) return cb(JSON.stringify(checkResult))
-            let account = await QueryAccount({nickname})
-            if (account) {
-                returnData.msg = '用户已存在'
-                returnData.code = 10002
+        console.log(`${socket.id} id connected`)
+
+        socket.on('register', async (data, cb) => {
+            let returnData = {code: 0, msg: 'suc', data: null}
+            try {
+                let {nickname, password} = data
+                let checkResult = argsCheck({nickname, password}, 'a')
+                if (checkResult) return cb(JSON.stringify(checkResult))
+                let account = await QueryAccount({nickname})
+                if (account) {
+                    returnData.msg = '用户已存在'
+                    returnData.code = 10002
+                    return cb(JSON.stringify(returnData))
+                }
+                let uid = await GetNextUniqueId('uid')
+                await InsertAccount({uid, nickname, password: MD5(password)})
+                returnData.data = uid
                 return cb(JSON.stringify(returnData))
+            } catch (e) {
+                _dealErr(e, returnData, cb)
             }
-            let uid = await GetNextUniqueId('uid')
-            await InsertAccount({uid, nickname, password})
-            returnData.data = uid
-            return cb(JSON.stringify(returnData))
-        } catch (e) {
-            _dealErr(e, returnData, cb)
-        }
-    })
+        })
 
-    socket.on('login', async (nickname, password, cb) => {
-        let returnData = {code: 0, msg: 'suc', data: null}
-        try {
-            let account = await QueryAccount({nickname, password})
-            if (!account) {
-                returnData.msg = '验证失败'
-                returnData.code = 10002
-                return cb(JSON.stringify(returnData))
+        socket.on('login', async (data, cb) => {
+            let returnData = {code: 0, msg: 'suc', data: null}
+            try {
+                let {nickname, password} = data
+                let account = await QueryAccount({nickname, password: MD5(password)})
+                if (!account) {
+                    returnData.msg = '验证失败'
+                    returnData.code = 10002
+                    return cb(JSON.stringify(returnData))
+                }
+                socket.uid = account.uid
+                // socket.account = account
+                AccountObj[socket.uid] = account
+                returnData.data = nickname
+                cb(JSON.stringify(returnData))
+            } catch (e) {
+                _dealErr(e, returnData, cb)
             }
-            returnData.data = account
-            cb(JSON.stringify(returnData))
-        } catch (e) {
-            _dealErr(e, returnData, cb)
-        }
-    })
-    // console.log('client connection')
-    //
-    // //触发客户端注册的自定义事件
-    // socket.emit('ClientListener', {hello: 'world'})
-    //
-    // //注册服务器的自定义事件
-    // socket.on('ServerListener', function (data, callback) {
-    //     console.log('ServerListener email:' + data['email'])
-    //     callback({abc: 123})
-    // })
+        })
 
-    //断开连接会发送
-    socket.on('disconnect', function () {
-        console.log('client disconnected')
-    })
+        //获取宠物
+        socket.on('bind pet', async (data, cb) => {
+            let returnData = {code: 0, msg: 'suc', data: null}
+            try {
+                if (!socket.uid) {
+                    return _dealNoLogin(returnData, cb)
+                }
+                let {name} = data
+                let checkResult = argsCheck({name}, 'p')
+                if (checkResult) return cb(JSON.stringify(checkResult))
+                let pid = await GetNextUniqueId('pid')
+                let pet = new Pet(pid, name, 1)
+                let account = AccountObj[socket.uid]
+                if (!account.pets) account.pets = []
+                account.pets.push(pid)
+                await InsertPet(pet)
+                cb(JSON.stringify(returnData))
+            } catch (e) {
+                _dealErr(e, returnData, cb)
+            }
+        })
 
-})
+        //断开连接更新账号进DB
+        socket.on('disconnect', async () => {
+            if (socket.uid) {
+                let account = AccountObj[socket.uid]
+                await UpdateAccount(account)
+            }
+            console.log('client disconnected')
+        })
+    })
+}
+
+let exportsObj = {}
+
+async function main() {
+    while (!exportsObj.io) {
+        await sleep(50)
+    }
+    io = exportsObj.io
+    startIo()
+}
+
+main()
+
+module.exports = exportsObj
