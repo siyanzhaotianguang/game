@@ -14,4 +14,4 @@ const pro = {
     MONGODB_URL:PRO_MONGODB_URL
 }
 
-module.exports = dev
+module.exports = pro

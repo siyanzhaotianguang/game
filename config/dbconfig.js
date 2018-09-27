@@ -3,7 +3,7 @@
  */
 
 
-const  PRO_MONGODB_URL = 'mongodb://web:237344255@localhost:27017/web'
+const  PRO_MONGODB_URL = 'mongodb://game:237344255@localhost:27017/game'
 const DEV_MONGODB_URL = 'mongodb://127.0.0.1:27017/'
 
 module.exports = {DEV_MONGODB_URL,PRO_MONGODB_URL}

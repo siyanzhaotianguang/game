@@ -14,8 +14,8 @@ const Fight = require('./ctrl/fightCtrl')
 
 
 function _dealErr(e, returnData, cb) {
-    if (typeof e === 'object') e = e.msg
     console.error(e)
+    if (typeof e === 'object') e = e.msg
     returnData.msg = e
     returnData.code = 10001
     cb(JSON.stringify(returnData))
