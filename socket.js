@@ -79,12 +79,18 @@ async function startIo() {
                 if (!socket.uid) {
                     return _dealNoLogin(returnData, cb)
                 }
+                let account = AccountObj[socket.uid]
+                if (account.pets && account.pets.length > 0) {
+                    returnData.msg = '已有宠物'
+                    returnData.code = 10002
+                    return cb(JSON.stringify(returnData))
+                }
                 let {name} = data
                 let checkResult = argsCheck({name}, 'p')
                 if (checkResult) return cb(JSON.stringify(checkResult))
                 let pid = await GetNextUniqueId('pid')
                 let pet = new Pet(pid, name, 1)
-                let account = AccountObj[socket.uid]
+                pet.uid = socket.uid
                 if (!account.pets) account.pets = []
                 account.pets.push(pid)
                 await InsertPet(pet)
@@ -96,22 +102,23 @@ async function startIo() {
         })
 
         //匹配战斗
-        socket.on('match fight', async (pid, cb) => {
+        socket.on('match fight', async (data, cb) => {
             let returnData = {code: 0, msg: 'suc', data: null}
             try {
                 if (!socket.uid) {
                     return _dealNoLogin(returnData, cb)
                 }
+                let {pid} = data
                 pid = parseInt(pid)
                 let account = AccountObj[socket.uid]
-                if (!account.pets || account.pets.indexOf(pid) < 0) {
-                    returnData.msg = '不是你的宠物'
-                    returnData.code = 10002
-                    return cb(JSON.stringify(returnData))
-                }
                 let pet = await QueryPet({pid})
                 if (!pet) {
                     returnData.msg = '不存在该宠物'
+                    returnData.code = 10002
+                    return cb(JSON.stringify(returnData))
+                }
+                if (account.uid !== pet.uid) {
+                    returnData.msg = '不是你的宠物'
                     returnData.code = 10002
                     return cb(JSON.stringify(returnData))
                 }

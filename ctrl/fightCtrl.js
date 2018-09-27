@@ -2,9 +2,9 @@ let {Pet, RobotPet} = require('../data/pet')
 
 class Fight {
     constructor(fighter1, fighter2) {
-        if ((!(fighter1 instanceof Pet) && !(fighter1 instanceof RobotPet)) || (!(fighter2 instanceof Pet) && !(fighter2 instanceof RobotPet))) {
-            return console.error('请传入2只宠物')
-        }
+        // if ((!(fighter1 instanceof Pet) && !(fighter1 instanceof RobotPet)) || (!(fighter2 instanceof Pet) && !(fighter2 instanceof RobotPet))) {
+        //     return console.error('请传入2只宠物')
+        // }
         this.fighter1 = fighter1
         this.fighter2 = fighter2
         this.fight = this.fight.bind(this)
