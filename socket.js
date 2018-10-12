@@ -37,17 +37,17 @@ async function startIo() {
             try {
                 let {nickname, password} = data
                 let checkResult = argsCheck({nickname, password}, 'a')
-                if (checkResult) return cb(JSON.stringify(checkResult))
+                if (checkResult) return cb('register',JSON.stringify(checkResult))
                 let account = await QueryAccount({nickname})
                 if (account) {
                     returnData.msg = '用户已存在'
                     returnData.code = 10002
-                    return cb(JSON.stringify(returnData))
+                    return cb('register',JSON.stringify(returnData))
                 }
                 let uid = await GetNextUniqueId('uid')
                 await InsertAccount({uid, nickname, password: MD5(password)})
                 returnData.data = uid
-                return cb(JSON.stringify(returnData))
+                return cb('register',JSON.stringify(returnData))
             } catch (e) {
                 _dealErr(e, returnData, cb)
             }
@@ -61,13 +61,13 @@ async function startIo() {
                 if (!account) {
                     returnData.msg = '验证失败'
                     returnData.code = 10002
-                    return cb(JSON.stringify(returnData))
+                    return cb('login',JSON.stringify(returnData))
                 }
                 socket.uid = account.uid
                 // socket.account = account
                 AccountObj[socket.uid] = account
                 returnData.data = nickname
-                cb(JSON.stringify(returnData))
+                cb('login',JSON.stringify(returnData))
             } catch (e) {
                 _dealErr(e, returnData, cb)
             }
@@ -84,11 +84,11 @@ async function startIo() {
                 if (account.pets && account.pets.length > 0) {
                     returnData.msg = '已有宠物'
                     returnData.code = 10002
-                    return cb(JSON.stringify(returnData))
+                    return cb('bind pet',JSON.stringify(returnData))
                 }
                 let {name} = data
                 let checkResult = argsCheck({name}, 'p')
-                if (checkResult) return cb(JSON.stringify(checkResult))
+                if (checkResult) return cb('bind pet',JSON.stringify(checkResult))
                 let pid = await GetNextUniqueId('pid')
                 let pet = new Pet(pid, name, 1)
                 pet.uid = socket.uid
@@ -96,12 +96,49 @@ async function startIo() {
                 account.pets.push(pid)
                 await InsertPet(pet)
                 returnData.data = pet
-                cb(JSON.stringify(returnData))
+                cb('bind pet',JSON.stringify(returnData))
             } catch (e) {
                 _dealErr(e, returnData, cb)
             }
         })
-
+		//获取宠物信息
+        socket.on('get pet', async (data, cb) => {
+            let returnData = {code: 0, msg: 'suc', data: null}
+            try {
+                if (!socket.uid) {
+                    return _dealNoLogin(returnData, cb)
+                }
+                let account = AccountObj[socket.uid]
+                let {pid} = data
+                pid = parseInt(pid)
+                let pet = await QueryPet({pid})
+                if (!pet) {
+                    returnData.msg = '不存在该宠物'
+                    returnData.code = 10002
+                    return cb('get pet',JSON.stringify(returnData))
+                }
+                returnData.data = pet
+                cb('get pet',JSON.stringify(returnData))
+            } catch (e) {
+                _dealErr(e, returnData, cb)
+            }
+        })
+		
+		socket.on('get account', async (cb) => {
+            let returnData = {code: 0, msg: 'suc', data: null}
+            try {
+                if (!socket.uid) {
+                    return _dealNoLogin(returnData, cb)
+                }
+                let account = AccountObj[socket.uid]
+                let returnAccount = JSON.parse(JSON.stringify(account))
+                delete returnAccount['password']
+                returnData.data = returnAccount
+                cb('get account',JSON.stringify(returnData))
+            } catch (e) {
+                _dealErr(e, returnData, cb)
+            }
+        })
         //匹配战斗
         socket.on('match fight', async (data, cb) => {
             let returnData = {code: 0, msg: 'suc', data: null}
@@ -116,18 +153,18 @@ async function startIo() {
                 if (!pet) {
                     returnData.msg = '不存在该宠物'
                     returnData.code = 10002
-                    return cb(JSON.stringify(returnData))
+                    return cb('match fight',JSON.stringify(returnData))
                 }
                 if (account.uid !== pet.uid) {
                     returnData.msg = '不是你的宠物'
                     returnData.code = 10002
-                    return cb(JSON.stringify(returnData))
+                    return cb('match fight',JSON.stringify(returnData))
                 }
                 let robotPet = new RobotPet(pet.lv, '机器人大魔王', 1)
                 let fight = new Fight(pet, robotPet)
                 let result = fight.fight()
                 returnData.data = result
-                cb(JSON.stringify(returnData))
+                cb('match fight',JSON.stringify(returnData))
             } catch (e) {
                 _dealErr(e, returnData, cb)
             }
