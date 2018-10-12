@@ -1,13 +1,17 @@
+let seg_num = require('../function/seg_num')
+
 class Pet {
     constructor(pid, name, type) {
+        let addPointArr = seg_num(180, 5, 50)
+
         this.pid = pid
         this.name = name
         this.type = type
-        this.str = Math.ceil(Math.random() * 50) + 50
-        this.luck = Math.ceil(Math.random() * 50) + 50
-        this.hp = Math.ceil(Math.random() * 500) + 500
-        this.agi = Math.ceil(Math.random() * 50) + 50
-        this.def = Math.ceil(Math.random() * 50) + 50
+        this.str = addPointArr[0] + 50
+        this.luck = addPointArr[1] + 50
+        this.hp = (addPointArr[2] + 50) * 10
+        this.agi = addPointArr[3] + 50
+        this.def = addPointArr[4] + 50
         this.feedDegree = 100//饱食度
         this.vigor = 100//精力 
         this.lv = 1
@@ -31,4 +35,4 @@ class RobotPet {
     }
 }
 
-module.exports = {Pet,RobotPet}
+module.exports = { Pet, RobotPet }
