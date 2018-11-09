@@ -3,6 +3,6 @@
  */
 
 const DEV_SERVER_URL = 'http://localhost:3001'
-const PRO_SERVER_URL = 'http://193.112.132.226:3001'
+const PRO_SERVER_URL = ''
 
 module.exports = {PRO_SERVER_URL, DEV_SERVER_URL}
